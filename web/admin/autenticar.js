@@ -5,7 +5,7 @@ function getUrlBase() {
     if (DEBUG) {
         return "http://localhost:5000/"
     } else {
-        return "http://pos.bigdata.i2.com.br:8888/analiseserver/"
+        return "http://localhost:5000/analiseserver/"
     }
 
 }
