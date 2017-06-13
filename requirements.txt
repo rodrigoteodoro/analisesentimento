@@ -1,0 +1,10 @@
+pymongo
+flask
+flask_cors
+tweepy
+pandas
+sklearn
+tornado
+setproctitle
+scipy
+numpy

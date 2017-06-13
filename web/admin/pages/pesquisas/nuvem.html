@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Análise de sentimentos | Núvem de palavras</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="../../plugins/datatables/dataTables.bootstrap.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini" onload="validarOauth(1)">
+<div class="wrapper">
+
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="../../index.html" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">A<b>Twt</b></span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg"><b>Análise</b> Twitter</span>
+        </a>
+
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <!-- Sidebar toggle button-->
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                <span class="sr-only">Recolher</span>
+            </a>
+        </nav>
+    </header>
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu">
+                <li class="header">Usuário: <label id="lblLogin"></label></li>
+                <li><a href="../../pages/pesquisas/index.html"><i class="fa fa-book"></i> <span>Pesquisas</span></a>
+                <li><a href="../../pages/treino/index.html"><i class="fa fa-file"></i> <span>Tweets treino</span></a>
+                </li>
+                <li><a href="../../login.html"><i class="fa fa-lock"></i> <span>Logout</span></a></li>
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <section class="content-header">
+            <h1>
+                Análise dos Tweets relacionados à pesquisa: <label id="lblPesquisa">&nbsp;</label>
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Opções</h3>
+                        </div>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-primary" id="btnAnalisar">Analisar</button>
+                            <button type="button" class="btn btn-primary" id="btnGraficos">Visualizar</button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success alert-dismissible" id="dvMensagem">
+                        <button type="button" class="close" id="btnFecharMensagem">&times;</button>
+                        <h4><i class="icon fa fa-check"></i> Atenção</h4>
+                        Solicitação efetuada com sucesso! A análise será feita!
+                    </div>
+
+                    <div class="alert alert-danger alert-dismissible" id="dvMensagemErro">
+                        <button type="button" class="close" id="btnFecharMensagemErro">&times;</button>
+                        <h4><i class="icon fa fa-ban"></i> Atenção!</h4>
+                        Erro durante sua solitação, verifique se a pesquisa foi cadastrada corretamente!<br/>
+                    </div>
+
+                    <!-- DONUT CHART -->
+                    <div class="box box-danger">
+                        <div class="box-header with-border">
+                            <h3 class="box-title"><label id="lblTotal">&nbsp;</label></h3>
+                            <div class="box-tools pull-right">
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div id="nuvem" position="relative" width=600 height=600></div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+
+                    <div align="right">
+                        <a class="btn btn-app" id="btnRecarregar">
+                            <i class="fa fa-repeat"></i> Recarregar
+                        </a>
+                    </div>
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Tweets</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table id="tbTweets" class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Texto</th>
+                                    <th class="text-center">Sentimento</th>
+                                    <th class="text-right">Probabilidade</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <!-- /.box -->
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <footer class="main-footer">
+        &nbsp;
+    </footer>
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 2.2.3 -->
+<script src="../../plugins/jQuery/jquery-2.2.3.min.js"></script>
+<!-- Bootstrap 3.3.6 -->
+<script src="../../bootstrap/js/bootstrap.min.js"></script>
+<!-- DataTables -->
+<script src="../../plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="../../plugins/datatables/dataTables.bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="../../plugins/slimScroll/jquery.slimscroll.min.js"></script>
+<!-- ChartJS 1.0.1 -->
+<!-- jQCloud2 -->
+<script src="../../plugins/jqcloud2/jqcloud.min.js"></script>
+<link rel="stylesheet" href="../../plugins/jqcloud2/jqcloud.min.css">
+<!-- FastClick -->
+<script src="../../plugins/fastclick/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="../../dist/js/app.min.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="../../dist/js/demo.js"></script>
+<script src="../../autenticar.js"></script>
+<!-- page script -->
+<script>
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === sParam) {
+                return sParameterName[1] === undefined ? true : sParameterName[1];
+            }
+        }
+    };
+
+  function getCloud() {
+    $.get(getUrlBase()+"tweets/nuvempalavras?tag="+getUrlParameter('tag'), function( data ) {
+      var palavras=data.palavras;
+       console.log(palavras);
+      $('#nuvem').jQCloud(palavras, { width: 600,  height: 600, autoResize: true , shape: 'rectangular',  }); // 
+    });
+  };
+
+  $(function () {
+
+    $('#dvMensagem').hide();
+    $('#dvMensagemErro').hide();
+
+    var tag = getUrlParameter('tag');
+    $('#lblPesquisa').html(tag);
+
+
+   $('#btnFecharMensagem').on('click', function () {
+        $('#dvMensagem').hide();
+    });
+   $('#btnFecharMensagemErro').on('click', function () {
+        $('#dvMensagemErro').hide();
+    });
+
+   $('#btnRecarregar').on('click', function () {
+       $('#tbTweets').DataTable().ajax.reload();
+   });
+   getCloud();
+ });
+
+
+
+
+</script>
+</body>
+</html>
